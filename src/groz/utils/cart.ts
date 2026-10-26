@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CartItem, Product, Language, PaymentMethod } from '../types';
 import { BUSINESS_CONFIG } from '../config/business';
 

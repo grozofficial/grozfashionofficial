@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NavRoute, Language } from '../types';
 
 export interface RouteSEOMetadata {

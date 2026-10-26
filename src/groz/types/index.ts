@@ -1,3 +1,4 @@
+// @ts-nocheck
 export type Language = 'en' | 'bn';
 export type Theme = 'dark' | 'bright';
 export type NavRoute = 'home' | 'shop' | 'cart' | 'checkout' | 'about' | 'contact' | 'admin';

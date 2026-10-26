@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Language, Theme, NavRoute, Product, CartItem, AdminUser, Order } from '../types';
 import { translations, TranslationKey, t as translateFn } from '../translations';

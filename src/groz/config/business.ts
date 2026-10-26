@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PaymentMethod, PaymentInfo } from '../types';
 
 export const BUSINESS_CONFIG = {

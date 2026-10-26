@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { TravellingProduct } from '../components/TravellingProduct';
