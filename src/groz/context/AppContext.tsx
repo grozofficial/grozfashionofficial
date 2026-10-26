@@ -5,8 +5,10 @@ import { translations, TranslationKey, t as translateFn } from '../translations'
 import { sanitizeCartStorage, clampQuantity, formatBDT, calculateCartSubtotal } from '../utils/cart';
 import { applyRouteSEO } from '../utils/seo';
 import { INITIAL_PRODUCTS } from '../data/products';
-import { auth, googleProvider, OWNER_EMAIL } from '../services/firebase';
-import { signInWithPopup, getIdToken } from 'firebase/auth';
+import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable/index';
+
+const OWNER_EMAIL = 'grozofficial7@gmail.com';
 
 interface AppContextType {
   language: Language;
@@ -291,74 +293,56 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setCart([]);
   }, []);
 
-  // Admin Actions (Genuine Firebase Google Auth)
+  // Admin Actions (Google sign-in via Lovable Cloud; owner role checked in the database)
+  const resolveAdmin = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+    if (!user) return { success: false, error: 'Not signed in.' };
+    const { data: isAdmin } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      return { success: false, error: `Account ${user.email} is not authorized. Access restricted to owner ${OWNER_EMAIL}.` };
+    }
+    const adminUserData: AdminUser = {
+      email: user.email || OWNER_EMAIL,
+      username: user.user_metadata?.full_name || 'Owner',
+      uid: user.id,
+      role: 'admin',
+      token: session.access_token,
+    };
+    setAdminUser(adminUserData);
+    try { localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminUserData)); } catch {}
+    return { success: true };
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) resolveAdmin();
+      else { setAdminUser(null); try { localStorage.removeItem(ADMIN_STORAGE_KEY); } catch {} }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') resolveAdmin();
+      if (event === 'SIGNED_OUT') setAdminUser(null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [resolveAdmin]);
+
   const adminLogin = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      if (!user || !user.email) {
-        return { success: false, error: 'Google authentication failed to return user identity.' };
-      }
-
-      if (user.email.toLowerCase() !== OWNER_EMAIL.toLowerCase()) {
-        return { success: false, error: `Account ${user.email} is not authorized. Access restricted to owner ${OWNER_EMAIL}.` };
-      }
-
-      const idToken = await getIdToken(user, true);
-
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
+      const result = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: `${window.location.origin}/#admin`,
+        extraParams: { prompt: 'select_account', login_hint: OWNER_EMAIL },
       });
-
-      const text = await res.text();
-      let data: any = {};
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch {
-        return { success: false, error: 'Invalid or empty response from server: ' + (text || 'No response') };
-      }
-
-      if (res.ok && data.token) {
-        const adminUserData: AdminUser = {
-          email: user.email,
-          username: user.displayName || 'Owner',
-          uid: user.uid,
-          role: 'admin',
-          token: data.token,
-        };
-        setAdminUser(adminUserData);
-        try {
-          localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminUserData));
-        } catch {
-          // ignore
-        }
-        await refreshProducts();
-        return { success: true };
-      }
-
-      return { success: false, error: data.error || 'Authentication denied by server.' };
+      if (result.error) return { success: false, error: result.error.message || 'Google sign-in failed.' };
+      if (result.redirected) return { success: true };
+      return await resolveAdmin();
     } catch (err: any) {
-      if (err?.code === 'auth/popup-closed-by-user') {
-        return { success: false, error: 'Sign-in popup was closed before completion.' };
-      }
-      return { success: false, error: err.message || 'Authentication error' };
+      return { success: false, error: err?.message || 'Authentication error' };
     }
-  }, [refreshProducts]);
+  }, [resolveAdmin]);
 
   const adminLogout = useCallback(async () => {
-    if (adminUser?.token) {
-      try {
-        await fetch('/api/admin/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${adminUser.token}` },
-        });
-      } catch {
-        // ignore
-      }
-    }
+    await supabase.auth.signOut();
     setAdminUser(null);
     try {
       localStorage.removeItem(ADMIN_STORAGE_KEY);
@@ -366,7 +350,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       // ignore
     }
     await refreshProducts();
-  }, [adminUser, refreshProducts]);
+  }, [refreshProducts]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartSubtotal = calculateCartSubtotal(cart);
