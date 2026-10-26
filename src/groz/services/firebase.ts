@@ -22,7 +22,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import firebaseConfig from '../../firebase-applet-config.json';
+import firebaseConfig from '../firebase-applet-config.json';
 import { Product } from '../types';
 
 export const OWNER_EMAIL = 'grozofficial7@gmail.com';
