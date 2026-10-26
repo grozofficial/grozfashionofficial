@@ -128,10 +128,11 @@ export const SEO_DICTIONARY: Record<NavRoute, Record<Language, RouteSEOMetadata>
  * Returns canonical absolute URL for the route
  */
 export function buildCanonicalURL(origin: string, pathname: string, route: NavRoute): string {
-  const base = `${origin}${pathname}`;
+  const base = `${origin}/`;
   if (route === 'home') {
     return base;
   }
+  if (route === 'shop' || route === 'about' || route === 'contact') return `${origin}/${route}`;
   return `${base}#${route}`;
 }
 
@@ -225,7 +226,7 @@ export function applyRouteSEO(route: NavRoute, lang: Language): void {
   if (typeof document === 'undefined') return;
 
   const meta = SEO_DICTIONARY[route]?.[lang] || SEO_DICTIONARY.home.en;
-  const origin = window.location.origin;
+  const origin = 'https://grozfashionofficial.lovable.app';
   const pathname = window.location.pathname;
   const canonicalUrl = buildCanonicalURL(origin, pathname, route);
   const logoUrl = `${origin}/assets/aistudio/FB_IMG_1792947438632_9dd0b6b3.jpg`;
@@ -241,6 +242,14 @@ export function applyRouteSEO(route: NavRoute, lang: Language): void {
     document.head.appendChild(descTag);
   }
   descTag.setAttribute('content', meta.description);
+
+  let robotsTag = document.querySelector('meta[name="robots"]');
+  if (!robotsTag) {
+    robotsTag = document.createElement('meta');
+    robotsTag.setAttribute('name', 'robots');
+    document.head.appendChild(robotsTag);
+  }
+  robotsTag.setAttribute('content', ['cart', 'checkout', 'admin'].includes(route) ? 'noindex, follow' : 'index, follow');
 
   // 3. Meta keywords
   let keywordsTag = document.querySelector('meta[name="keywords"]');
