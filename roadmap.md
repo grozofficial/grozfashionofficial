@@ -1,0 +1,3 @@
+- [ ] Add automatic public sitemap and explicit route inclusion decisions.
+- [ ] Expose existing shop, about, and contact pages at crawlable paths without changing the storefront.
+- [ ] Verify sitemap responses, page destinations, and routing tests.

@@ -83,6 +83,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (hash === 'about') return 'about';
     if (hash === 'contact') return 'contact';
     if (hash === 'admin') return 'admin';
+    if (hash === 'home') return 'home';
+    if (window.location.pathname === '/shop') return 'shop';
+    if (window.location.pathname === '/about') return 'about';
+    if (window.location.pathname === '/contact') return 'contact';
     return 'home';
   };
 
@@ -193,7 +197,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Sync route with URL Hash
   const setRoute = useCallback((newRoute: NavRoute) => {
     setRouteState(newRoute);
-    window.location.hash = newRoute === 'home' ? '' : `#${newRoute}`;
+    window.location.hash = newRoute === 'home' && window.location.pathname === '/' ? '' : `#${newRoute}`;
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 

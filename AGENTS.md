@@ -9,6 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- The GROZ storefront lives in src/groz (imported app, client-only, hash navigation) and is mounted from src/routes/index.tsx; src/groz/localApi.ts stands in for the old /api server until a real backend is connected.
+- The client-only GROZ storefront is shared by the home, shop, about, and contact file routes through Storefront; pathname defaults and legacy hash navigation preserve the imported experience.
+- Maintain the router-derived sitemap inventory in src/lib/sitemap.ts and require an explicit staticData.sitemap decision on every route; this keeps public URLs automatic and private destinations excluded.
 - GROZ data lives in Lovable Cloud; src/groz/localApi.ts maps the storefront's original /api/* calls onto the database (RLS enforces owner-only admin access via user_roles), so pages stay unchanged.
 - Products table stores owner edits/additions over the built-in catalog (soft-delete flag), because the built-in items aren't seeded into the database.
