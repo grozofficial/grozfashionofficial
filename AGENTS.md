@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- The GROZ storefront lives in src/groz (imported app, client-only, hash navigation) and is mounted from src/routes/index.tsx; src/groz/localApi.ts stands in for the old /api server until a real backend is connected.
