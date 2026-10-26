@@ -69,7 +69,7 @@ async function handle(path: string, init?: RequestInit): Promise<Response | null
   }
   const m = path.match(/^\/api\/orders\/lookup\/(.+)$/);
   if (m && method === 'GET') {
-    const q = decodeURIComponent(m[1]).trim().toLowerCase();
+    const q = decodeURIComponent(m[1] ?? "").trim().toLowerCase();
     const o = getOrders().find((x) => x.id.toLowerCase() === q || x.customerPhone.includes(q));
     if (!o) return json({ error: 'Order reference not found in archive.' }, 404);
     return json({ id: o.id, customerName: o.customerName, orderStatus: o.orderStatus, paymentStatus: o.paymentStatus, totalBDT: o.totalBDT, deliveryArea: o.deliveryArea, itemsCount: o.items.reduce((s, i) => s + i.quantity, 0), createdAt: o.createdAt });
@@ -89,7 +89,7 @@ export function installLocalApi() {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
     const path = url.startsWith('/') ? url : new URL(url).origin === location.origin ? new URL(url).pathname : '';
     if (path.startsWith('/api/')) {
-      const res = await handle(path.split('?')[0], init);
+      const res = await handle(path.split("?")[0] ?? path, init);
       if (res) return res;
     }
     return orig(input as any, init);
