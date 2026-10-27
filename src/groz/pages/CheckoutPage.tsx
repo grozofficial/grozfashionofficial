@@ -46,6 +46,7 @@ export const CheckoutPage: React.FC = () => {
   const orderTotal = cartSubtotal + deliveryCharge;
 
   const activePaymentConfig = BUSINESS_CONFIG.paymentMethods.find((p) => p.id === paymentMethod)!;
+  const isCOD = paymentMethod === 'cod';
 
   const handleCopyNumber = () => {
     const textToCopy = activePaymentConfig.number;
@@ -100,7 +101,7 @@ export const CheckoutPage: React.FC = () => {
     if (!deliveryAddress.trim()) {
       errs.address = t('formErrorRequired');
     }
-    if (!transactionId.trim()) {
+    if (!isCOD && !transactionId.trim()) {
       errs.trxId = t('formErrorRequired');
     }
     setErrors(errs);
@@ -250,7 +251,7 @@ export const CheckoutPage: React.FC = () => {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-groz-muted">Payment Channel:</span>
-              <span className="font-medium text-groz-main uppercase">{confirmedOrder.paymentMethod} &bull; TrxID: {confirmedOrder.transactionId}</span>
+              <span className="font-medium text-groz-main uppercase">{confirmedOrder.paymentMethod}{confirmedOrder.transactionId ? <> &bull; TrxID: {confirmedOrder.transactionId}</> : ''}</span>
             </div>
             <div className="flex justify-between items-center pt-2 border-t border-groz text-sm font-bold text-groz-main">
               <span>Total Payable:</span>
@@ -451,7 +452,7 @@ export const CheckoutPage: React.FC = () => {
               <label className="text-xs font-mono-editorial uppercase text-groz-main block font-medium">
                 {t('selectPaymentMethod')}
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {BUSINESS_CONFIG.paymentMethods.map((pm) => {
                   const isSelected = paymentMethod === pm.id;
                   return (
