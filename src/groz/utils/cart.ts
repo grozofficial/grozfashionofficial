@@ -123,6 +123,7 @@ export function generateWhatsAppOrderURL(
   const paymentConfig = BUSINESS_CONFIG.paymentMethods.find((p) => p.id === details?.paymentMethod);
   const paymentName = paymentConfig ? paymentConfig.name : (details?.paymentMethod || 'bKash').toUpperCase();
   const paymentNumber = paymentConfig ? paymentConfig.number : '01604985164';
+  const isCOD = details?.paymentMethod === 'cod';
 
   const lines: string[] = [];
   const isBn = lang === 'bn';
@@ -157,11 +158,15 @@ export function generateWhatsAppOrderURL(
     lines.push(`উপমোট: ৳${toBengaliNumerals(subtotal.toLocaleString())}`);
     lines.push(`ডেলিভারি চার্জ: ৳${toBengaliNumerals(deliveryCharge.toLocaleString())}`);
     lines.push(`সর্বমোট প্রদেয়: ৳${toBengaliNumerals(total.toLocaleString())}`);
-    lines.push(`পেমেন্ট মাধ্যম: ${paymentName} (${paymentNumber})`);
-    if (details?.transactionId) {
-      lines.push(`ট্রানজ্যাকশন আইডি (TrxID): ${details.transactionId}`);
+    if (isCOD) {
+      lines.push('পেমেন্ট মাধ্যম: ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে মূল্য পরিশোধ)');
     } else {
-      lines.push(`ট্রানজ্যাকশন আইডি: (হোয়াটসঅ্যাপে আলোচনার মাধ্যমে প্রদান করা হবে)`);
+      lines.push(`পেমেন্ট মাধ্যম: ${paymentName} (${paymentNumber})`);
+      if (details?.transactionId) {
+        lines.push(`ট্রানজ্যাকশন আইডি (TrxID): ${details.transactionId}`);
+      } else {
+        lines.push(`ট্রানজ্যাকশন আইডি: (হোয়াটসঅ্যাপে আলোচনার মাধ্যমে প্রদান করা হবে)`);
+      }
     }
 
     if (details?.customerNotes) {
@@ -199,11 +204,15 @@ export function generateWhatsAppOrderURL(
     lines.push(`Subtotal: ৳${subtotal.toLocaleString()}`);
     lines.push(`Delivery Fee: ৳${deliveryCharge.toLocaleString()}`);
     lines.push(`Total Amount: ৳${total.toLocaleString()}`);
-    lines.push(`Payment Method: ${paymentName} (${paymentNumber})`);
-    if (details?.transactionId) {
-      lines.push(`Payment TrxID: ${details.transactionId}`);
+    if (isCOD) {
+      lines.push('Payment Method: Cash on Delivery (pay when the order arrives)');
     } else {
-      lines.push(`Payment TrxID: (To be settled via chat)`);
+      lines.push(`Payment Method: ${paymentName} (${paymentNumber})`);
+      if (details?.transactionId) {
+        lines.push(`Payment TrxID: ${details.transactionId}`);
+      } else {
+        lines.push(`Payment TrxID: (To be settled via chat)`);
+      }
     }
 
     if (details?.customerNotes) {
