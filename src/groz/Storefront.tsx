@@ -20,7 +20,7 @@ function Splash() {
       <span className="font-serif-editorial text-3xl tracking-[0.4em] text-white sm:text-4xl motion-safe:animate-[groz-splash-fade_1.6s_ease-out_0.2s_both]">
         GROZ
       </span>
-      <span className="h-px w-16 bg-groz-red/80 motion-safe:animate-[groz-splash-line_1.4s_ease-out_0.4s_both]" />
+      <span className="h-px w-16 bg-groz-red opacity-80 motion-safe:animate-[groz-splash-line_1.4s_ease-out_0.4s_both]" />
     </div>
   );
 }
