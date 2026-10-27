@@ -6,7 +6,7 @@ export type NavRoute = 'home' | 'shop' | 'cart' | 'checkout' | 'about' | 'contac
 export type ProductCategory = 'all' | 'outerwear' | 'leather' | 'accessories' | 'timepieces';
 
 export type StockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
-export type PaymentMethod = 'bkash' | 'nagad' | 'upay' | 'rocket';
+export type PaymentMethod = 'bkash' | 'nagad' | 'upay' | 'rocket' | 'cod';
 export type OrderStatus = 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
 export type PaymentStatus = 'Unverified' | 'Verified' | 'Refunded';
 
@@ -58,7 +58,7 @@ export interface PaymentInfo {
   id: PaymentMethod;
   name: string;
   number: string;
-  accountType: 'Personal' | 'Merchant';
+  accountType: string;
   brandColor: string;
   instructionEn: string;
   instructionBn: string;

@@ -17,8 +17,8 @@ export const BUSINESS_CONFIG = {
   
   // Delivery Rates
   delivery: {
-    insideNoakhaliBDT: 60,
-    outsideNoakhaliBDT: 120,
+    insideNoakhaliBDT: 70,
+    outsideNoakhaliBDT: 140,
     estimatedDaysInside: '1-2 Days (Maijdee Court Express)',
     estimatedDaysOutside: '2-4 Days (Curated Courier)',
   },
@@ -60,6 +60,15 @@ export const BUSINESS_CONFIG = {
       brandColor: '#8c2d8c',
       instructionEn: 'Send Money via DBBL Rocket to this 11-digit mobile wallet number.',
       instructionBn: 'রকেট পার্সোনাল নম্বরে সেন্ড মানি করে ট্রানজ্যাকশন আইডি লিখুন।',
+    },
+    {
+      id: 'cod' as PaymentMethod,
+      name: 'Cash on Delivery',
+      number: '',
+      accountType: 'Pay on Delivery',
+      brandColor: '#e5e5e5',
+      instructionEn: 'Pay in cash when your order arrives at your door. No advance payment or Transaction ID is needed.',
+      instructionBn: 'অর্ডার আপনার ঠিকানায় পৌঁছে গেলে নগদ টাকা পরিশোধ করুন। অগ্রিম পেমেন্ট বা ট্রানজ্যাকশন আইডির প্রয়োজন নেই।',
     },
   ],
 };
