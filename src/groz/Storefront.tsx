@@ -2,15 +2,23 @@ import { ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import seahorseLogo from "@/assets/groz-seahorse.jpg.asset.json";
 
-// Loading screen lasts exactly one second: fade in, then fade out.
+// The loading screen lasts one second from the moment the page starts loading.
 const SPLASH_MS = 1000;
 const SPLASH_EXIT_MS = 300;
 
-const GrozApp = lazy(async () => {
-  const { installLocalApi } = await import("@/groz/localApi");
-  installLocalApi();
-  return import("@/groz/App");
-});
+function loadApp() {
+  return import("@/groz/localApi").then(({ installLocalApi }) => {
+    installLocalApi();
+    return import("@/groz/App");
+  });
+}
+
+// Start fetching the storefront as soon as this module runs, so it is ready
+// when the loading screen ends.
+const preloaded = typeof window !== "undefined" ? loadApp() : null;
+if (preloaded) preloaded.catch(() => {});
+
+const GrozApp = lazy(() => preloaded ?? loadApp());
 
 function Splash({ leaving = false }: { leaving?: boolean }) {
   return (
@@ -39,8 +47,11 @@ export function Storefront() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const exit = setTimeout(() => setLeaving(true), SPLASH_MS - SPLASH_EXIT_MS);
-    const end = setTimeout(() => setDone(true), SPLASH_MS);
+    // Count from when the page started loading, not from when this mounted.
+    const elapsed = performance.now();
+    const remaining = Math.max(0, SPLASH_MS - elapsed);
+    const exit = setTimeout(() => setLeaving(true), Math.max(0, remaining - SPLASH_EXIT_MS));
+    const end = setTimeout(() => setDone(true), remaining);
     return () => {
       clearTimeout(exit);
       clearTimeout(end);
