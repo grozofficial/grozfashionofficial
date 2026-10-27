@@ -484,6 +484,7 @@ export const CheckoutPage: React.FC = () => {
 
             {/* Selected Payment Number Display & Copy Number Action */}
             <div className="p-4 border border-groz bg-groz-surface/60 space-y-3">
+              {!isCOD && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <span className="text-[11px] font-mono-editorial uppercase tracking-wider text-groz-muted block">
@@ -512,6 +513,7 @@ export const CheckoutPage: React.FC = () => {
                   )}
                 </button>
               </div>
+              )}
 
               <p className="text-xs font-serif-editorial text-groz-muted italic border-t border-groz-subtle pt-2">
                 {language === 'bn' ? activePaymentConfig.instructionBn : activePaymentConfig.instructionEn}
@@ -520,6 +522,7 @@ export const CheckoutPage: React.FC = () => {
 
             {/* Transaction ID & Notes */}
             <div className="space-y-4 pt-2">
+              {!isCOD && (
               <div className="space-y-1">
                 <label className="text-xs font-mono-editorial uppercase text-groz-main block font-medium">
                   {t('trxIdLabel')}
@@ -535,6 +538,7 @@ export const CheckoutPage: React.FC = () => {
                 />
                 {errors.trxId && <p className="text-[11px] font-mono-editorial text-groz-red">{errors.trxId}</p>}
               </div>
+              )}
 
               <div className="space-y-1">
                 <label className="text-xs font-mono-editorial uppercase text-groz-main block font-medium">
