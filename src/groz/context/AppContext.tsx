@@ -44,7 +44,10 @@ interface AppContextType {
   clearSearch: () => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+// Keep a single context instance across hot reloads so providers and consumers always match.
+const g = globalThis as any;
+const AppContext: React.Context<AppContextType | undefined> =
+  g.__GROZ_APP_CONTEXT__ ?? (g.__GROZ_APP_CONTEXT__ = createContext<AppContextType | undefined>(undefined));
 
 const THEME_STORAGE_KEY = 'groz_theme';
 const LANG_STORAGE_KEY = 'groz_lang';
