@@ -228,6 +228,29 @@
   border-color: var(--border-subtle);
 }
 
+/* Loading splash animations */
+@keyframes groz-splash-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes groz-splash-line {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 /* Travelling cutout soft shadow constraint */
 .shadow-cutout {
   filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.25));
