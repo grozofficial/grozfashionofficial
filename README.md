@@ -2,7 +2,7 @@
 
 Build a complete website using the uploaded files
 
-This project was built with [Lovable](https://lovable.dev).
+
 
 **Live app**: https://grozfashionofficial.lovable.app
 
